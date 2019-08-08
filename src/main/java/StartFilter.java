@@ -13,10 +13,11 @@ public class StartFilter implements Filter {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
-        String startPage = request.getContextPath() + "/view/index.xhtml";
+        String startPage = request.getContextPath().concat("/view/home.xhtml");
+
 
         response.sendRedirect(startPage);
-
+       // filterChain.doFilter(servletRequest, servletResponse);
     }
 
     public void destroy() {

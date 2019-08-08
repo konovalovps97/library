@@ -1,8 +1,6 @@
-import javax.enterprise.context.Dependent;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 
-@Dependent
 @ManagedBean(name = "lol")
 @SessionScoped
 public class ExampleBean {
