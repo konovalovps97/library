@@ -7,11 +7,11 @@
 
     <filter>
         <filter-name>startFilter</filter-name>
-        <filter-class>StartFilter</filter-class>
+        <filter-class>filters.StartFilter</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>startFilter</filter-name>
-        <url-pattern>*</url-pattern>
+        <url-pattern>*.xhtml</url-pattern>
     </filter-mapping>
 
     <servlet>
@@ -26,7 +26,7 @@
     </servlet-mapping>
 
     <welcome-file-list>
-        <welcome-file>view/home.xhtml</welcome-file>
+        <welcome-file>view/index.xhtml</welcome-file>
     </welcome-file-list>
 
 </web-app>
