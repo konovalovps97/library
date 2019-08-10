@@ -17,8 +17,8 @@ import java.sql.SQLException;
 @SessionScoped
 public class ExampleBean implements Serializable {
 
-    @PersistenceUnit(unitName  = "persistenceUnitName")
-    private EntityManager entityManager;
+        @PersistenceUnit(unitName  = "persistenceUnitName")
+    private EntityManagerFactory entityManagerFactory;
 
     private Long phone;
     private String password;
@@ -46,10 +46,10 @@ public class ExampleBean implements Serializable {
             EntityManagerFactory emfdb = Persistence.createEntityManagerFactory("persistenceUnitName");
             DriverManager.registerDriver(new org.postgresql.Driver());
             Connection connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/test", "test_user", "test_user");
-            User user = entityManager.find(User.class, phone);
-            if (user.getPassword().equals(password)) {
+            //User user = entityManager.find(User.class, phone);
+          //  if (user.getPassword().equals(password)) {
 
-            }
+           // }
 
         } catch (SQLException  | NullPointerException e) {
             System.out.println(123);
