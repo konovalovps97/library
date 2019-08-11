@@ -4,6 +4,7 @@ import entity.User;
 
 import javax.ejb.Stateful;
 import javax.ejb.Stateless;
+import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.persistence.*;
@@ -14,10 +15,10 @@ import java.sql.SQLException;
 
 @ManagedBean(name = "lol")
 @Stateful
-@SessionScoped
-public class ExampleBean implements Serializable {
+@ApplicationScoped
+public class ExampleBean {
 
-        @PersistenceUnit(unitName  = "persistenceUnitName")
+        @PersistenceUnit(unitName  = "lol")
     private EntityManagerFactory entityManagerFactory;
 
     private Long phone;
@@ -42,14 +43,15 @@ public class ExampleBean implements Serializable {
     public String login() {
 
         try {
-
-            EntityManagerFactory emfdb = Persistence.createEntityManagerFactory("persistenceUnitName");
+          //  this.getClass().getClassLoader().getResource("META-INF/persistence.xml");
+            Thread.currentThread().getContextClassLoader().getResource("META-INF/persistence.xml");
+            EntityManagerFactory emfdb = Persistence.createEntityManagerFactory("lol");
             DriverManager.registerDriver(new org.postgresql.Driver());
-            Connection connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/test", "test_user", "test_user");
+           // Connection connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/test", "test_user", "test_user");
             //User user = entityManager.find(User.class, phone);
-          //  if (user.getPassword().equals(password)) {
+          /*  if (user.getPassword().equals(password)) {
 
-           // }
+            }*/
 
         } catch (SQLException  | NullPointerException e) {
             System.out.println(123);
