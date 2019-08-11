@@ -46,12 +46,16 @@ public class ExampleBean {
           //  this.getClass().getClassLoader().getResource("META-INF/persistence.xml");
             Thread.currentThread().getContextClassLoader().getResource("META-INF/persistence.xml");
             EntityManagerFactory emfdb = Persistence.createEntityManagerFactory("lol");
+
             DriverManager.registerDriver(new org.postgresql.Driver());
+
            // Connection connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/test", "test_user", "test_user");
             //User user = entityManager.find(User.class, phone);
-          /*  if (user.getPassword().equals(password)) {
+            EntityManager entityManager = emfdb.createEntityManager();
+            User user = entityManager.find(User.class, phone);
+            if (user.getPassword().equals(password)) {
 
-            }*/
+            }
 
         } catch (SQLException  | NullPointerException e) {
             System.out.println(123);
