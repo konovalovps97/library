@@ -34,15 +34,15 @@
     <h:form id="form">
         <h:panelGrid id="gridPhone" columns="4" cellpadding="5">
             <p:outputLabel for="phone" value="Введите номер телефона +" style="font-weight:bold"/>
-            <p:inputText id="phone" value="#{lol.phone}"/>
+            <p:inputText id="phone" value="#{auth.phone}"/>
         </h:panelGrid>
 
         <h:panelGrid id="gridPassword" columns="4" cellpadding="5">
             <p:outputLabel for="password" value="Введите пароль" style="font-weight:bold"/>
-            <p:inputText id="password" value="#{lol.password}"/>
+            <p:inputText id="password" value="#{auth.password}"/>
         </h:panelGrid>
 
-        <p:commandButton value="Войти" action="#{lol.login}"/>
+        <p:commandButton value="Войти" action="#{auth.login}"/>
 
     </h:form>
     <!--

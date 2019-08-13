@@ -10,7 +10,7 @@ import javax.persistence.Table;
 public class User {
 
     @Id
-    @Column(name = "phone")
+    @Column(name = "phone_number")
     private Long phoneNumber;
 
     private String password;

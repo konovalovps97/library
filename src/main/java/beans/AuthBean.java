@@ -13,16 +13,16 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-@ManagedBean(name = "lol")
+@ManagedBean(name = "auth")
 @Stateful
 @ApplicationScoped
-public class ExampleBean {
-
-        @PersistenceUnit(unitName  = "lol")
-    private EntityManagerFactory entityManagerFactory;
+public class AuthBean {
 
     private Long phone;
     private String password;
+
+    @Column(name = "is_admin")
+    private Boolean admin = Boolean.FALSE;
 
     public String getPassword() {
         return password;
@@ -40,10 +40,17 @@ public class ExampleBean {
         this.phone = phone;
     }
 
+    public Boolean getAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(Boolean admin) {
+        this.admin = admin;
+    }
+
     public String login() {
 
         try {
-          //  this.getClass().getClassLoader().getResource("META-INF/persistence.xml");
             Thread.currentThread().getContextClassLoader().getResource("META-INF/persistence.xml");
             EntityManagerFactory emfdb = Persistence.createEntityManagerFactory("lol");
 
@@ -53,8 +60,10 @@ public class ExampleBean {
             //User user = entityManager.find(User.class, phone);
             EntityManager entityManager = emfdb.createEntityManager();
             User user = entityManager.find(User.class, phone);
-            if (user.getPassword().equals(password)) {
 
+
+            if (user.getPassword().equals(password)) {
+                return "/view/library";
             }
 
         } catch (SQLException  | NullPointerException e) {

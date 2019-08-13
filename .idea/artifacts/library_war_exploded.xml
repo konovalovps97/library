@@ -20,6 +20,7 @@
           <element id="library" level="project" name="Maven: javax.faces:jsf-api:2.1" />
           <element id="directory" name="META-INF">
             <element id="file-copy" path="$PROJECT_DIR$/src/main/resources/persistence.xml" output-file-name="persistence.xml" />
+            <element id="library" level="project" name="JPA 2.1-JPA 2.1" />
           </element>
           <element id="file-copy" path="$MAVEN_REPOSITORY$/javax/persistence/persistence-api/1.0.2/persistence-api-1.0.2.jar" />
           <element id="library" level="project" name="Maven: org.eclipse.persistence:commonj.sdo:2.1.1" />
@@ -29,6 +30,7 @@
           <element id="library" level="project" name="Maven: org.eclipse.persistence:org.eclipse.persistence.core:2.6.0-M3" />
           <element id="library" level="project" name="Maven: org.eclipse.persistence:org.eclipse.persistence.jpa.jpql:2.6.0-M3" />
           <element id="library" level="project" name="Maven: org.eclipse.persistence:org.eclipse.persistence.jpa:2.6.0-M3" />
+          <element id="library" level="project" name="Maven: org.primefaces:primefaces:7.0" />
         </element>
       </element>
       <element id="javaee-facet-resources" facet="library/web/Web" />

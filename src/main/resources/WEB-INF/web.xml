@@ -34,4 +34,14 @@
         <listener-class>tmpl.web.PersistenceAppListener</listener-class>
     </listener>
 
+    <context-param>
+        <param-name>primefaces.FONT_AWESOME</param-name>
+        <param-value>true</param-value>
+    </context-param>
+
+    <security-role>
+        <role-name>ADMIN</role-name>
+    </security-role>
+
+
 </web-app>
