@@ -56,21 +56,19 @@ public class AuthBean {
 
             DriverManager.registerDriver(new org.postgresql.Driver());
 
-           // Connection connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/test", "test_user", "test_user");
-            //User user = entityManager.find(User.class, phone);
             EntityManager entityManager = emfdb.createEntityManager();
             User user = entityManager.find(User.class, phone);
-
 
             if (user.getPassword().equals(password)) {
                 return "/view/library";
             }
 
-        } catch (SQLException  | NullPointerException e) {
+        } catch (SQLException | NullPointerException e) {
             System.out.println(123);
         }
 
-        System.out.println(123);
         return "";
     }
 }
+// Connection connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/test", "test_user", "test_user");
+//User user = entityManager.find(User.class, phone);

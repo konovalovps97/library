@@ -1,20 +1,30 @@
 package beans;
 
 import entity.Book;
-import entity.Car;
-import entity.User;
+import org.primefaces.component.collector.Collector;
 import service.LibService;
 
 import javax.annotation.PostConstruct;
+import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
-import javax.persistence.*;
-import java.io.Serializable;
+import javax.faces.context.FacesContext;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+import javax.persistence.Query;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @ManagedBean(name = "lib")
-@ViewScoped
+@ApplicationScoped
 public class LibraryBean {
 
     String bookName;
@@ -23,8 +33,8 @@ public class LibraryBean {
 
     Integer quantity;
 
-
     private List<Book> books;
+    private List<Book> basket;
 
     @ManagedProperty("#{libService}")
     private LibService service;
@@ -32,6 +42,7 @@ public class LibraryBean {
     @PostConstruct
     public void init() {
         books = getBooks();
+        basket = getBasket();
     }
 
 
@@ -49,14 +60,27 @@ public class LibraryBean {
     }
 
     public void addBook(Book book) {
-        EntityManager entityManager;
-        EntityManagerFactory factory = Persistence
-                .createEntityManagerFactory("lol");
-        entityManager = factory.createEntityManager();
-        entityManager.getTransaction().begin();
-        entityManager.createQuery("update Book b set b.quantity = 1 where b.id = " + book.getId()).executeUpdate();
-        entityManager.flush();
-        System.out.println("hello.world");
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        HttpServletRequest request = (HttpServletRequest) facesContext.getExternalContext().getRequest();
+        HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
+        List<Cookie> cookies = new ArrayList<>(Arrays.asList(request.getCookies()));
+
+        System.out.println(123);
+
+
+        if (!cookies.stream().anyMatch(cookie -> cookie.getValue().equals(book.getId().toString())) && book.getQuantity() != 0) {
+            response.addCookie(new Cookie("book" + book.getId(), book.getId().toString()));
+        }
+
+            /*
+            EntityManager entityManager;
+            EntityManagerFactory factory = Persistence
+                    .createEntityManagerFactory("lol");
+            entityManager = factory.createEntityManager();
+            entityManager.getTransaction().begin();
+
+            entityManager.createNativeQuery("update books set quantity =" + String.valueOf(book.getQuantity() - 1) + " where id = " + book.getId()).executeUpdate();
+            entityManager.getTransaction().commit();*/
     }
 
     public String getBookName() {
@@ -97,5 +121,30 @@ public class LibraryBean {
 
     public void setService(LibService service) {
         this.service = service;
+    }
+
+    public List<Book> getBasket() {
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        HttpServletRequest request = (HttpServletRequest) facesContext.getExternalContext().getRequest();
+        List<Cookie> cookies = new ArrayList<>(Arrays.asList(request.getCookies()));
+
+        List<Integer> books = cookies
+                .stream()
+                .filter(cookie -> cookie.getName().contains("book"))
+                .map(cookie -> Integer.parseInt(cookie.getValue()))
+                .collect(Collectors.toList());
+
+        EntityManager entityManager;
+        EntityManagerFactory factory = Persistence
+                .createEntityManagerFactory("lol");
+        entityManager = factory.createEntityManager();
+        entityManager.getTransaction().begin();
+
+        String query = "select b from Book as b where b.id in" + "(" + books + ")";
+        query = query.replaceAll("\\[", "").replaceAll("\\]", "");
+
+        List<Book> listBook = (List<Book>) entityManager.createQuery(query).getResultList();
+
+        return listBook;
     }
 }
