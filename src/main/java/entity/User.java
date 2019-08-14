@@ -1,9 +1,8 @@
 package entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -14,6 +13,23 @@ public class User {
     private Long phoneNumber;
 
     private String password;
+
+
+    /*@OneToMany
+    @JoinTable(name = "user_books",
+            joinColumns = {@JoinColumn(name = "phone_number")},
+            inverseJoinColumns = {@JoinColumn(name = "book_id")}
+    )
+    private List<Book> entityBList;*/
+
+
+    @ManyToMany(cascade = { CascadeType.ALL })
+    @JoinTable(
+            name = "user_books",
+            joinColumns = { @JoinColumn(name = "phone_number") },
+            inverseJoinColumns = { @JoinColumn(name = "id") }
+    )
+    Set<Book> books = new HashSet<>();
 
     public String getPassword() {
         return password;

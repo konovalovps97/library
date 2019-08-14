@@ -36,53 +36,6 @@ public class LibraryBean {
     private List<Book> books;
     private List<Book> basket;
 
-    @ManagedProperty("#{libService}")
-    private LibService service;
-
-    @PostConstruct
-    public void init() {
-        books = getBooks();
-        basket = getBasket();
-    }
-
-
-    private List<Book> getBooks() {
-        EntityManager entityManager;
-        EntityManagerFactory factory = Persistence
-                .createEntityManagerFactory("lol");
-        entityManager = factory.createEntityManager();
-        entityManager.getTransaction().begin();
-        List<Book> listPersons = entityManager.createQuery("SELECT b FROM  Book as b").getResultList();
-        if (listPersons == null) {
-            System.out.println("all is bad");
-        }
-        return listPersons;
-    }
-
-    public void addBook(Book book) {
-        FacesContext facesContext = FacesContext.getCurrentInstance();
-        HttpServletRequest request = (HttpServletRequest) facesContext.getExternalContext().getRequest();
-        HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
-        List<Cookie> cookies = new ArrayList<>(Arrays.asList(request.getCookies()));
-
-        System.out.println(123);
-
-
-        if (!cookies.stream().anyMatch(cookie -> cookie.getValue().equals(book.getId().toString())) && book.getQuantity() != 0) {
-            response.addCookie(new Cookie("book" + book.getId(), book.getId().toString()));
-        }
-
-            /*
-            EntityManager entityManager;
-            EntityManagerFactory factory = Persistence
-                    .createEntityManagerFactory("lol");
-            entityManager = factory.createEntityManager();
-            entityManager.getTransaction().begin();
-
-            entityManager.createNativeQuery("update books set quantity =" + String.valueOf(book.getQuantity() - 1) + " where id = " + book.getId()).executeUpdate();
-            entityManager.getTransaction().commit();*/
-    }
-
     public String getBookName() {
         return bookName;
     }
@@ -111,16 +64,62 @@ public class LibraryBean {
         this.books = books;
     }
 
+    public void setBasket(List<Book> basket) {
+        this.basket = basket;
+    }
+
     public LibService getService() {
         return service;
     }
 
-    public List<Book> getCars() {
-        return books;
-    }
-
     public void setService(LibService service) {
         this.service = service;
+    }
+
+    @ManagedProperty("#{libService}")
+    private LibService service;
+
+    @PostConstruct
+    public void init() {
+        books = getBooks();
+    }
+
+    private List<Book> getBooks() {
+        EntityManager entityManager;
+        EntityManagerFactory factory = Persistence
+                .createEntityManagerFactory("lol");
+        entityManager = factory.createEntityManager();
+        entityManager.getTransaction().begin();
+        List<Book> listPersons = entityManager.createQuery("SELECT b FROM  Book as b").getResultList();
+        if (listPersons == null) {
+            System.out.println("all is bad");
+        }
+        return listPersons;
+    }
+
+    public void addBook(Book book) {
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        HttpServletRequest request = (HttpServletRequest) facesContext.getExternalContext().getRequest();
+        HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
+        List<Cookie> cookies = new ArrayList<>(Arrays.asList(request.getCookies()));
+
+        if (!cookies.stream().anyMatch(cookie -> cookie.getValue().equals(book.getId().toString())) && book.getQuantity() != 0) {
+            response.addCookie(new Cookie("book" + book.getId(), book.getId().toString()));
+        }
+
+            /*
+            EntityManager entityManager;
+            EntityManagerFactory factory = Persistence
+                    .createEntityManagerFactory("lol");
+            entityManager = factory.createEntityManager();
+            entityManager.getTransaction().begin();
+
+            entityManager.createNativeQuery("update books set quantity =" + String.valueOf(book.getQuantity() - 1) + " where id = " + book.getId()).executeUpdate();
+            entityManager.getTransaction().commit();*/
+    }
+
+    public List<Book> getCars() {
+        return books;
     }
 
     public List<Book> getBasket() {

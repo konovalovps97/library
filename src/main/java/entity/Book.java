@@ -4,6 +4,8 @@ import service.LibService;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "books")
@@ -19,6 +21,9 @@ public class Book implements Serializable {
     private String author;
 
     private Integer quantity;
+
+    @ManyToMany(mappedBy = "books")
+    private Set<User> employees = new HashSet<>();
 
     public Book(){}
 

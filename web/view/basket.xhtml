@@ -74,23 +74,12 @@
                 <h:outputText value="#{car.author}" />
             </p:column>
 
-            <p:column>
-                <f:facet name="header">
-                    <h:outputText id="quantity" value="Количество" />
-                </f:facet>
-                <h:outputText value="#{car.quantity}"  />
-            </p:column>
-
-            <p:column>
-                <f:facet name="header">
-                    <h:outputText value="Действие" />
-                </f:facet>
-                <h:commandButton  update=":main:tb1:lol:quantity" value="Добавить" id="submitButton" actionListener="#{lib.addBook(car)}" />
-            </p:column>
         </p:dataTable>
 
 
     </h:form>
+    <h:commandButton  update=":main:tb1:lol:quantity" value="Открыть корзину" id="openBasket" action="basket"/>
+
 </h:body>
 
 
