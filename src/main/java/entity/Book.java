@@ -5,6 +5,7 @@ import service.LibService;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -13,6 +14,7 @@ public class Book implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "book_id")
     private Long id;
 
     @Column(name = "book_name")
@@ -25,6 +27,16 @@ public class Book implements Serializable {
     @ManyToMany(mappedBy = "books")
     private Set<User> users = new HashSet<>();
 
+    @OneToMany(mappedBy="book")
+    private List<UserBasket> booksInBasket;
+
+    public List<UserBasket> getBooksInBasket() {
+        return booksInBasket;
+    }
+
+    public void setBooksInBasket(List<UserBasket> booksInBasket) {
+        this.booksInBasket = booksInBasket;
+    }
 
     public Set<User> getUsers() {
         return users;

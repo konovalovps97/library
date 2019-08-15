@@ -18,9 +18,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.math.BigInteger;
-import java.nio.ByteBuffer;
-import java.sql.DriverManager;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -165,7 +162,7 @@ public class LibraryBean {
             entityManager.persist(userBasket);
 
             //update в books
-            entityManager.createNativeQuery("update books set quantity =" + (book.getQuantity() - 1) + " where id = " + book.getId()).executeUpdate();
+            entityManager.createNativeQuery("update books set quantity =" + (book.getQuantity() - 1) + " where book_id = " + book.getId()).executeUpdate();
 
             entityManager.getTransaction().commit();
         });
@@ -202,5 +199,23 @@ public class LibraryBean {
         User user = entityManager.find(User.class, 123L);
 
         return  user.getBooks();
+    }
+
+    public void deleteBookFromBasket() {
+
+    }
+
+    public void deleteBookFromOrder(Book book) {
+        List<UserBasket> bookInUserBasket = book.getBooksInBasket();
+
+       /* List<UserBasket> bookInUserBasket = book.getBooksInBasket().stream()
+                .filter(userBasket -> book.getId().longValue() == userBasket.getBookId().longValue()).collect(Collectors.toList());
+
+        /*
+                .filter(userBasket -> userBasket.getPhoneNumber().equals(123L))
+                .filter(userBasket -> userBasket.getStatus().equals(Boolean.TRUE))*/
+
+
+        System.out.println(123);
     }
 }

@@ -78,7 +78,7 @@
                 <f:facet name="header">
                     <h:outputText value="Действие" />
                 </f:facet>
-                <h:commandButton   update=":main:tb1:lol:quantity" value="Отдать" id="submitButton" actionListener="#{lib.addBook(car)}" />
+                <h:commandButton   update=":main:tb1:lol:quantity" value="Отдать" id="submitButton" actionListener="#{lib.deleteBookFromOrder(car)}" />
                 <h:commandButton  style="float: right;" update=":main:tb1:lol:quantity" value="Просмотр истории книги" id="historyButton" action="basket"/>
             </p:column>
         </p:dataTable>
