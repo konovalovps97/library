@@ -4,6 +4,7 @@ import service.LibService;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -25,7 +26,7 @@ public class Book implements Serializable {
     private Integer quantity;
 
     @ManyToMany(mappedBy = "books")
-    private Set<User> users = new HashSet<>();
+    private List<User> users = new ArrayList<>();
 
     @OneToMany(mappedBy="book")
     private List<UserBasket> booksInBasket;
@@ -38,11 +39,11 @@ public class Book implements Serializable {
         this.booksInBasket = booksInBasket;
     }
 
-    public Set<User> getUsers() {
+    public List<User> getUsers() {
         return users;
     }
 
-    public void setUsers(Set<User> users) {
+    public void setUsers(List<User> users) {
         this.users = users;
     }
 

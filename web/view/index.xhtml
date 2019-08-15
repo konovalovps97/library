@@ -30,9 +30,10 @@
     </style>
 </h:head>
 
-<h:body>
-    <h:form id="form">
-        <h:panelGrid id="gridPhone" columns="4" cellpadding="5">
+<!--<p:inputText type="hidden" value="#{auth.init}"></p:inputText>-->
+<h:body >
+    <h:form id="form" >
+        <h:panelGrid id="gridPhone" columns="4" cellpadding="5" >
             <p:outputLabel for="phone" value="Введите номер телефона +" style="font-weight:bold"/>
             <p:inputText id="phone" value="#{auth.phone}"/>
         </h:panelGrid>

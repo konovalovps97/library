@@ -155,7 +155,6 @@ public class LibraryBean {
             entityManager = factory.createEntityManager();
 
             entityManager.getTransaction().begin();
-            UUID.randomUUID();
             UserBasket userBasket = new UserBasket(123L, Boolean.TRUE, book.getId(), gen());
 
             //сохранение в user_books
@@ -201,12 +200,29 @@ public class LibraryBean {
         return  user.getBooks();
     }
 
-    public void deleteBookFromBasket() {
+    public void deleteBookFromBasket(Book book) {
+
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        HttpServletRequest request = (HttpServletRequest) facesContext.getExternalContext().getRequest();
+        HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
+
+        getCookies().stream().filter(cookie -> cookie.getName().contains("book" + book.getId())).forEach(cookie -> {
+
+            cookie.setMaxAge(0);
+            response.addCookie(cookie);
+        });
 
     }
 
     public void deleteBookFromOrder(Book book) {
-        List<UserBasket> bookInUserBasket = book.getBooksInBasket();
+        //book.setBooksInBasket(new ArrayList<>());
+       /* try {
+
+            System.out.println(book.getBooksInBasket());
+        } catch (Throwable r) {
+            r.printStackTrace();
+        }*/
+       //List<UserBasket> bookInUserBasket  ;
 
        /* List<UserBasket> bookInUserBasket = book.getBooksInBasket().stream()
                 .filter(userBasket -> book.getId().longValue() == userBasket.getBookId().longValue()).collect(Collectors.toList());
@@ -214,8 +230,12 @@ public class LibraryBean {
         /*
                 .filter(userBasket -> userBasket.getPhoneNumber().equals(123L))
                 .filter(userBasket -> userBasket.getStatus().equals(Boolean.TRUE))*/
-
-
         System.out.println(123);
+       long size = book.getBooksInBasket().stream().filter(userBasket -> userBasket.getBookId().toString().equals("1")).count();
+
+                        //userBasket.getBookId().floatValue() == book.getId().floatValue()
+
+
+        System.out.println(book.getBooksInBasket());
     }
 }

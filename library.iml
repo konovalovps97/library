@@ -20,7 +20,7 @@
         <setting name="provider-name" value="EclipseLink" />
         <datasource-mapping>
           <factory-entry name="Entities" />
-          <factory-entry name="lol" value="7b001fdb-08c0-4765-b71b-10eaa0af62fe" />
+          <factory-entry name="lol" value="5a90e810-470e-4958-988b-232b6992e5b0" />
         </datasource-mapping>
         <naming-strategy-map />
         <deploymentDescriptor name="persistence.xml" url="file://$MODULE_DIR$/src/main/resources/persistence.xml" />
@@ -40,6 +40,8 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Java EE 6" level="project" />
     <orderEntry type="library" name="JPA 2.1-JPA 2.1" level="project" />
+    <orderEntry type="library" name="Maven: org.primefaces:primefaces:7.0" level="project" />
+    <orderEntry type="library" name="Maven: org.icefaces:icefaces:4.1.0" level="project" />
     <orderEntry type="library" name="Maven: org.glassfish:javax.faces:2.2.8" level="project" />
     <orderEntry type="library" name="Maven: javax.faces:jsf-api:2.1" level="project" />
     <orderEntry type="library" name="Maven: org.primefaces:primefaces:7.0" level="project" />
