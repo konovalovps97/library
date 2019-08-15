@@ -59,6 +59,8 @@ public class AuthBean {
             EntityManager entityManager = emfdb.createEntityManager();
             User user = entityManager.find(User.class, phone);
 
+
+
             if (user.getPassword().equals(password)) {
                 return "/view/library";
             }

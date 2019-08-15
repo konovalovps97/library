@@ -14,22 +14,21 @@ public class User {
 
     private String password;
 
-
-    /*@OneToMany
-    @JoinTable(name = "user_books",
-            joinColumns = {@JoinColumn(name = "phone_number")},
-            inverseJoinColumns = {@JoinColumn(name = "book_id")}
-    )
-    private List<Book> entityBList;*/
-
-
     @ManyToMany(cascade = { CascadeType.ALL })
     @JoinTable(
             name = "user_books",
             joinColumns = { @JoinColumn(name = "phone_number") },
-            inverseJoinColumns = { @JoinColumn(name = "id") }
+            inverseJoinColumns = { @JoinColumn(name = "book_id") }
     )
     Set<Book> books = new HashSet<>();
+
+    public Set<Book> getBooks() {
+        return books;
+    }
+
+    public void setBooks(Set<Book> books) {
+        this.books = books;
+    }
 
     public String getPassword() {
         return password;

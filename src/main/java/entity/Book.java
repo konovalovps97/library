@@ -23,7 +23,16 @@ public class Book implements Serializable {
     private Integer quantity;
 
     @ManyToMany(mappedBy = "books")
-    private Set<User> employees = new HashSet<>();
+    private Set<User> users = new HashSet<>();
+
+
+    public Set<User> getUsers() {
+        return users;
+    }
+
+    public void setUsers(Set<User> users) {
+        this.users = users;
+    }
 
     public Book(){}
 
