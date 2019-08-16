@@ -17,9 +17,6 @@ public class StartFilter implements Filter {
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         String startPage = request.getContextPath().concat("/view/index.xhtml");
 
-       /* if (Arrays.asList(request.getCookies()).stream().anyMatch(cookie -> "phone".equals(cookie.getName()))) {
-            response.sendRedirect(request.getContextPath() + "/view/library");
-        }*/
        // response.sendRedirect(startPage);
         filterChain.doFilter(servletRequest, servletResponse);
     }

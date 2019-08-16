@@ -55,18 +55,18 @@ public class AuthBean {
     }
 
 
-
-    
-    @PostConstruct
     public void init() throws IOException {
 
         FacesContext facesContext = FacesContext.getCurrentInstance();
         HttpServletRequest request = (HttpServletRequest) facesContext.getExternalContext().getRequest();
         HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
 
-        if (Arrays.asList(request.getCookies()).stream().anyMatch(cookie -> "phone".equals(cookie.getName()))) {
-            response.sendRedirect(request.getContextPath() + "/view/library");
+        if (request.getCookies() != null) {
+            if (Arrays.asList(request.getCookies()).stream().anyMatch(cookie -> "phone".equals(cookie.getName()))) {
+                response.sendRedirect(request.getContextPath() + "/view/library.xhtml");
+            }
         }
+
     }
 
     public String login() {
@@ -76,28 +76,32 @@ public class AuthBean {
         HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
 
         try {
-                Thread.currentThread().getContextClassLoader().getResource("META-INF/persistence.xml");
-                EntityManagerFactory emfdb = Persistence.createEntityManagerFactory("lol");
+            Thread.currentThread().getContextClassLoader().getResource("META-INF/persistence.xml");
+            EntityManagerFactory emfdb = Persistence.createEntityManagerFactory("lol");
 
-                DriverManager.registerDriver(new org.postgresql.Driver());
+            DriverManager.registerDriver(new org.postgresql.Driver());
 
-                EntityManager entityManager = emfdb.createEntityManager();
-                User user = entityManager.find(User.class, phone);
+            EntityManager entityManager = emfdb.createEntityManager();
+            User user = entityManager.find(User.class, phone);
 
 
-                if (user.getPassword().equals(password)) {
-                    Cookie cookie = new Cookie("phone", phone.toString());
-                    cookie.setMaxAge(86400);
-                    response.addCookie(cookie);
-                    return "/view/library";
-                }
+            if (user.getPassword().equals(password)) {
+                Cookie cookie = new Cookie("phone", phone.toString());
+                cookie.setMaxAge(86400);
 
-            } catch (SQLException | NullPointerException e) {
-                System.out.println(123);
+                response.addCookie(cookie);
+               //response.flushBuffer();
+                return "/view/library.xhtml";
             }
+
+        } catch (SQLException | NullPointerException e) {
+            System.out.println(123);
+        }
 
         return "";
     }
+
+
 }
 // Connection connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/test", "test_user", "test_user");
 //User user = entityManager.find(User.class, phone);

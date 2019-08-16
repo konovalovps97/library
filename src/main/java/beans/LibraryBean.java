@@ -18,7 +18,11 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.*;
+import java.sql.DriverManager;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 @ManagedBean(name = "lib")
@@ -95,7 +99,7 @@ public class LibraryBean {
         return listPersons;
     }
 
-    public void addBook(Book book) {
+    public String addBook(Book book) {
         FacesContext facesContext = FacesContext.getCurrentInstance();
         HttpServletRequest request = (HttpServletRequest) facesContext.getExternalContext().getRequest();
         HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
@@ -104,10 +108,10 @@ public class LibraryBean {
         if (!cookies.stream().anyMatch(cookie -> cookie.getValue().equals(book.getId().toString())) && book.getQuantity() != 0) {
             response.addCookie(new Cookie("book" + book.getId(), book.getId().toString()));
         }
-
+        return "/view/library.xhtml";
     }
 
-    public List<Book> getCars() {
+    public List<Book> getBooksInLib() {
         return books;
     }
 
@@ -124,14 +128,14 @@ public class LibraryBean {
             EntityManager entityManager;
             EntityManagerFactory factory = Persistence
                     .createEntityManagerFactory("lol");
-            entityManager = (JpaEntityManager) factory.createEntityManager();
+            entityManager = factory.createEntityManager();
 
             entityManager.getTransaction().begin();
 
             String query = "select b from Book as b where b.id in" + "(" + books + ")";
             query = query.replaceAll("\\[", "").replaceAll("\\]", "");
 
-            List<Book> listBook = (List<Book>) entityManager.createQuery(query).getResultList();
+            List<Book> listBook = entityManager.createQuery(query).getResultList();
 
             entityManager.flush();
             entityManager.getTransaction().commit();
@@ -140,6 +144,22 @@ public class LibraryBean {
         }
 
         return null;
+    }
+
+
+    public Long getPhoneNumber() {
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        HttpServletRequest request = (HttpServletRequest) facesContext.getExternalContext().getRequest();
+        HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
+
+        Cookie[] cookies = request.getCookies();
+        cookies[0].getName();
+        Long phoneNumber = Long.parseLong(Arrays.stream(request.getCookies())
+                .filter(cookie -> "phone".equals(cookie.getName()))
+                .collect(Collectors.toList())
+                .get(0)
+                .getValue());
+        return phoneNumber;
     }
 
     public void save() throws IOException {
@@ -153,9 +173,9 @@ public class LibraryBean {
             EntityManager entityManager;
             EntityManagerFactory factory = Persistence.createEntityManagerFactory("lol");
             entityManager = factory.createEntityManager();
-
             entityManager.getTransaction().begin();
-            UserBasket userBasket = new UserBasket(123L, Boolean.TRUE, book.getId(), gen());
+
+            UserBasket userBasket = new UserBasket(getPhoneNumber(), Boolean.TRUE, book.getId(), gen(), book.getBookName());
 
             //сохранение в user_books
             entityManager.persist(userBasket);
@@ -173,9 +193,10 @@ public class LibraryBean {
             response.addCookie(cookie);
         });
 
-        String loginPage = request.getContextPath() + "/view/index.xhtml";
+        String loginPage = request.getContextPath() + "/view/library.xhtml";
         response.sendRedirect(loginPage);
     }
+
 
     public Integer gen() {
         Random r = new Random(System.currentTimeMillis());
@@ -189,15 +210,17 @@ public class LibraryBean {
         return cookies;
     }
 
-    public Set<Book> getMyBook(){
+    public List<UserBasket> getMyBooks() {
         Thread.currentThread().getContextClassLoader().getResource("META-INF/persistence.xml");
         EntityManagerFactory emfdb = Persistence.createEntityManagerFactory("lol");
 
-
         EntityManager entityManager = emfdb.createEntityManager();
-        User user = entityManager.find(User.class, 123L);
+        User user = entityManager.find(User.class, getPhoneNumber());
 
-        return  user.getBooks();
+        String query = "SELECT b FROM  UserBasket  as b where b.phoneNumber = " + user.getPhoneNumber() + " and b.status = " + Boolean.TRUE;
+        List<UserBasket> userBaskets = entityManager.createQuery(query).getResultList();
+
+        return userBaskets;
     }
 
     public void deleteBookFromBasket(Book book) {
@@ -207,35 +230,35 @@ public class LibraryBean {
         HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
 
         getCookies().stream().filter(cookie -> cookie.getName().contains("book" + book.getId())).forEach(cookie -> {
-
             cookie.setMaxAge(0);
             response.addCookie(cookie);
         });
 
     }
 
-    public void deleteBookFromOrder(Book book) {
-        //book.setBooksInBasket(new ArrayList<>());
-       /* try {
-
-            System.out.println(book.getBooksInBasket());
-        } catch (Throwable r) {
-            r.printStackTrace();
-        }*/
-       //List<UserBasket> bookInUserBasket  ;
-
-       /* List<UserBasket> bookInUserBasket = book.getBooksInBasket().stream()
-                .filter(userBasket -> book.getId().longValue() == userBasket.getBookId().longValue()).collect(Collectors.toList());
-
-        /*
-                .filter(userBasket -> userBasket.getPhoneNumber().equals(123L))
-                .filter(userBasket -> userBasket.getStatus().equals(Boolean.TRUE))*/
-        System.out.println(123);
-       long size = book.getBooksInBasket().stream().filter(userBasket -> userBasket.getBookId().toString().equals("1")).count();
-
-                        //userBasket.getBookId().floatValue() == book.getId().floatValue()
-
-
-        System.out.println(book.getBooksInBasket());
+    public void deleteBookFromOrder(UserBasket userBasket) {
+        EntityManager entityManager;
+        EntityManagerFactory factory = Persistence.createEntityManagerFactory("lol");
+        entityManager = factory.createEntityManager();
+        entityManager.getTransaction().begin();
+        entityManager.createNativeQuery("update user_books set status =" + Boolean.FALSE + " where id_book_in_basket =  " + userBasket.getId()).executeUpdate();
+        entityManager.getTransaction().commit();
     }
+
+
+    public List<UserBasket> getHistory() {
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        HttpServletRequest request = (HttpServletRequest) facesContext.getExternalContext().getRequest();
+        HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
+
+        EntityManagerFactory emfdb = Persistence.createEntityManagerFactory("lol");
+
+
+        EntityManager entityManager = emfdb.createEntityManager();
+        String query = "SELECT b FROM  UserBasket  as b where b.phoneNumber = " + getPhoneNumber();
+        List<UserBasket> userBaskets = entityManager.createQuery(query).getResultList();
+
+        return userBaskets;
+    }
+
 }

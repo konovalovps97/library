@@ -30,7 +30,7 @@
 <h:body>
 
     <h:form id="main">
-        <p:dataTable id="tbl" var="car" value="#{lib.basket}"
+        <p:dataTable id="tbl" var="car" value="#{lib.bookHistory()}"
                      paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {Exporters}"
                      paginator="true" rows="10" style="margin-bottom:20px">
 
@@ -60,39 +60,25 @@
 
 
 
-            <p:column >
+            <p:column>
                 <f:facet name="header">
                     <h:outputText value="Название книги"/>
                 </f:facet>
-                <h:outputText rendered="true" value="#{car.bookName}" />
+                <h:outputText value="#{car.bookName}" />
             </p:column>
 
             <p:column>
                 <f:facet name="header">
-                    <h:outputText value="Автор" />
+                    <h:outputText value="Название книги"/>
                 </f:facet>
-                <h:outputText  rendered="true" value="#{car.author}" />
-            </p:column>
-
-            <p:column>
-                <f:facet name="header">
-                    <h:outputText value="Действие" />
-                </f:facet>
-                 <h:commandButton  update=":main:tb1:lol:quantity" value="Отмена" id="deleteElement" actionListener="#{lib.deleteBookFromBasket(car)}" />
-
+                <h:outputText value="#{car.status}" />
             </p:column>
 
         </p:dataTable>
 
 
-
-        <h:commandButton  update=":main:tb1:lol:quantity" value="Оформить заказ" id="openBasket" actionListener="#{lib.save}" />
-        <h:commandButton style="float: right" action="library" update=":main:tb1:lol:quantity" value="Назад" id="toMain" />
-
     </h:form>
-
 </h:body>
 
 
 </html>
-

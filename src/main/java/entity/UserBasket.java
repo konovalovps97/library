@@ -16,6 +16,9 @@ public class UserBasket {
 
     private Boolean status;
 
+    @Column(name = "book_name")
+    private String bookName;
+
     @Column(name = "book_id")
     private Long bookId;
 
@@ -31,11 +34,12 @@ public class UserBasket {
         this.book = book;
     }
 
-    public UserBasket(Long phoneNumber, Boolean status, Long bookId, Integer id) {
+    public UserBasket(Long phoneNumber, Boolean status, Long bookId, Integer id, String bookName) {
         this.phoneNumber = phoneNumber;
         this.status = status;
         this.bookId = bookId;
         this.id = id;
+        this.bookName = bookName;
     }
 
     public UserBasket() {
@@ -72,5 +76,13 @@ public class UserBasket {
 
     public void setBookId(Long bookId) {
         this.bookId = bookId;
+    }
+
+    public String getBookName() {
+        return bookName;
+    }
+
+    public void setBookName(String bookName) {
+        this.bookName = bookName;
     }
 }
