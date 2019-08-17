@@ -60,7 +60,7 @@
                 <f:facet name="header">
                     <h:outputText value="Действие" />
                 </f:facet>
-                <h:commandButton   update="@all" value="Добавить" id="submitButton" actionListener="#{lib.addBook(car)}" />
+                <h:commandButton   update=":main:tbl" value="Добавить" id="submitButton" actionListener="#{lib.addBook(car)}" />
             </p:column>
 
         </p:dataTable>

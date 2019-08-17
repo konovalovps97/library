@@ -4,6 +4,7 @@ import entity.Book;
 import entity.User;
 import entity.UserBasket;
 import org.eclipse.persistence.jpa.JpaEntityManager;
+import org.primefaces.component.datatable.DataTable;
 import service.LibService;
 
 import javax.annotation.PostConstruct;
@@ -233,6 +234,7 @@ public class LibraryBean {
             cookie.setMaxAge(0);
             response.addCookie(cookie);
         });
+
 
     }
 
