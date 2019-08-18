@@ -4,8 +4,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-      xmlns:p="http://primefaces.org/ui" xmlns:f="http://xmlns.jcp.org/jsf/core">
-<title>Библиотека</title>
+      xmlns:p="http://primefaces.org/ui" xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:b="http://java.sun.com/jsf/html">
+
 
 <h:head>
     <style type="text/css">
@@ -53,7 +53,7 @@
                 <f:facet name="header">
                     <h:outputText value="Действие" />
                 </f:facet>
-                 <p:commandButton   ajax="true" update="tbl"  value="Отмена" id="deleteElement" actionListener="#{lib.deleteBookFromBasket(car)}" />
+                 <h:commandButton   ajax="true" update="main"  value="Отмена" id="deleteElement" actionListener="#{lib.deleteBookFromBasket(car)}" />
 
             </p:column>
 
@@ -61,11 +61,10 @@
 
 
 
-        <p:commandButton      update="tbl" value="Оформить заказ" id="openBasket" actionListener="#{lib.save}" ajax="true" />
-
 
 
         <h:commandButton style="float: right" action="library" update=":main:tb1:lol:quantity" value="Назад" id="toMain" />
+        <h:commandButton   immediate="true"    value="Оформить заказ" id="openBasket" actionListener="#{lib.save}" />
 
     </h:form>
 

@@ -91,7 +91,7 @@ public class AuthBean {
 
                 response.addCookie(cookie);
                //response.flushBuffer();
-                return "/view/library.xhtml";
+                return "/view/library.xhtml?faces-redirect=true";
             }
 
         } catch (SQLException | NullPointerException e) {

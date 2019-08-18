@@ -3,14 +3,14 @@ package beans;
 import entity.Book;
 import entity.User;
 import entity.UserBasket;
-import org.eclipse.persistence.jpa.JpaEntityManager;
-import org.primefaces.component.datatable.DataTable;
 import service.LibService;
 
 import javax.annotation.PostConstruct;
-import javax.faces.bean.ApplicationScoped;
+import javax.faces.application.ViewHandler;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
+import javax.faces.bean.RequestScoped;
+import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -19,7 +19,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.sql.DriverManager;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -27,7 +26,7 @@ import java.util.Random;
 import java.util.stream.Collectors;
 
 @ManagedBean(name = "lib")
-@ApplicationScoped
+@RequestScoped
 public class LibraryBean {
 
     String bookName;
@@ -100,7 +99,7 @@ public class LibraryBean {
         return listPersons;
     }
 
-    public String addBook(Book book) {
+    public void addBook(Book book) {
         FacesContext facesContext = FacesContext.getCurrentInstance();
         HttpServletRequest request = (HttpServletRequest) facesContext.getExternalContext().getRequest();
         HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
@@ -109,7 +108,13 @@ public class LibraryBean {
         if (!cookies.stream().anyMatch(cookie -> cookie.getValue().equals(book.getId().toString())) && book.getQuantity() != 0) {
             response.addCookie(new Cookie("book" + book.getId(), book.getId().toString()));
         }
-        return "/view/library.xhtml";
+        String refreshpage = FacesContext.getCurrentInstance().getViewRoot().getViewId();
+        ViewHandler handler = FacesContext.getCurrentInstance().getApplication().getViewHandler();
+        UIViewRoot root = handler.createView(FacesContext.getCurrentInstance(), refreshpage);
+        root.setViewId(refreshpage);
+        FacesContext.getCurrentInstance().setViewRoot(root);
+
+        //return "/view/library.xhtml";
     }
 
     public List<Book> getBooksInLib() {
@@ -185,6 +190,15 @@ public class LibraryBean {
             entityManager.createNativeQuery("update books set quantity =" + (book.getQuantity() - 1) + " where book_id = " + book.getId()).executeUpdate();
 
             entityManager.getTransaction().commit();
+
+
+            String refreshpage = FacesContext.getCurrentInstance().getViewRoot().getViewId();
+            ViewHandler handler = FacesContext.getCurrentInstance().getApplication().getViewHandler();
+            UIViewRoot root = handler.createView(FacesContext.getCurrentInstance(), refreshpage);
+            root.setViewId(refreshpage);
+            FacesContext.getCurrentInstance().setViewRoot(root);
+           // FacesContext.getCurrentInstance().getPartialViewContext().getRenderIds().add("form");
+
         });
 
         //удаление кук
@@ -230,6 +244,7 @@ public class LibraryBean {
         HttpServletRequest request = (HttpServletRequest) facesContext.getExternalContext().getRequest();
         HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
 
+
         getCookies().stream().filter(cookie -> cookie.getName().contains("book" + book.getId())).forEach(cookie -> {
             cookie.setMaxAge(0);
             response.addCookie(cookie);
@@ -245,6 +260,14 @@ public class LibraryBean {
         entityManager.getTransaction().begin();
         entityManager.createNativeQuery("update user_books set status =" + Boolean.FALSE + " where id_book_in_basket =  " + userBasket.getId()).executeUpdate();
         entityManager.getTransaction().commit();
+
+
+
+        String refreshpage = FacesContext.getCurrentInstance().getViewRoot().getViewId();
+        ViewHandler handler = FacesContext.getCurrentInstance().getApplication().getViewHandler();
+        UIViewRoot root = handler.createView(FacesContext.getCurrentInstance(), refreshpage);
+        root.setViewId(refreshpage);
+        FacesContext.getCurrentInstance().setViewRoot(root);
     }
 
 

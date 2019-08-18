@@ -17,6 +17,7 @@
           <element id="library" level="project" name="Maven: javax.faces:jsf-api:2.1" />
           <element id="directory" name="META-INF">
             <element id="file-copy" path="$PROJECT_DIR$/src/main/resources/persistence.xml" output-file-name="persistence.xml" />
+            <element id="library" level="project" name="Maven: org.primefaces:primefaces:6.2" />
           </element>
           <element id="library" level="project" name="Maven: org.eclipse.persistence:commonj.sdo:2.1.1" />
           <element id="library" level="project" name="Maven: org.eclipse.persistence:eclipselink:2.5.0" />

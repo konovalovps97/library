@@ -5,7 +5,7 @@
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:p="http://primefaces.org/ui" xmlns:f="http://xmlns.jcp.org/jsf/core">
-<title>Библиотека</title>
+
 
 <h:head>
     <style type="text/css">
@@ -60,7 +60,7 @@
                 <f:facet name="header">
                     <h:outputText value="Действие" />
                 </f:facet>
-                <h:commandButton   update=":main:tbl" value="Добавить" id="submitButton" actionListener="#{lib.addBook(car)}" />
+                <h:commandButton    value="Добавить" id="submitButton" actionListener="#{lib.addBook(car)}" />
             </p:column>
 
         </p:dataTable>
