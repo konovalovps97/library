@@ -1,5 +1,6 @@
 package repo;
 
+import entity.Book;
 import entity.User;
 import entity.UserBasket;
 import service.LibService;
@@ -36,10 +37,17 @@ public class MyBookRepo {
         EntityManagerFactory factory = Persistence.createEntityManagerFactory("lol");
         entityManager = factory.createEntityManager();
         entityManager.getTransaction().begin();
-        entityManager.createNativeQuery("update user_books set status =" + Boolean.FALSE + " " + " where id_book_in_basket =  " + userBasket.getId()).executeUpdate();
+        entityManager.createNativeQuery("update user_books set status =" + Boolean.FALSE + " where id_book_in_basket =  " + userBasket.getId()).executeUpdate();
         entityManager.getTransaction().commit();
 
-       // service.reloadPage();
+        Book book = userBasket.getBook();
+
+        entityManager.getTransaction().begin();
+        entityManager.createNativeQuery("update books set quantity =" + (book.getQuantity() + 1) + " where book_id = " + book.getId()).executeUpdate();
+        entityManager.getTransaction().commit();
+
+
+        // service.reloadPage();
     }
 
     public LibService getService() {

@@ -30,7 +30,7 @@
 <h:body>
 
     <h:form id="main">
-        <p:dataTable id="tbl" var="car" value="#{lib.basket}"
+        <p:dataTable id="tbl" var="car" value="#{basket.basket}"
                      paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {Exporters}"
                      paginator="true" rows="10" style="margin-bottom:20px">
             <f:facet id="lol" name="{Exporters}">
@@ -76,18 +76,14 @@
                 <f:facet name="header">
                     <h:outputText value="Действие" />
                 </f:facet>
-                 <h:commandButton   ajax="true" update="main"  value="Отмена" id="deleteElement" actionListener="#{lib.deleteBookFromBasket(car)}" />
+                 <p:commandButton  update=":main:tbl" ajax="true" process="@this"   value="Отмена" id="deleteElement" actionListener="#{basket.deleteBookFromBasket(car)}" />
 
             </p:column>
 
         </p:dataTable>
 
-
-
-
-
         <h:commandButton style="float: right" action="library" update=":main:tb1:lol:quantity" value="Назад" id="toMain" />
-        <h:commandButton immediate="true" value="Оформить заказ" id="openBasket" actionListener="#{lib.save}" />
+        <p:commandButton immediate="true" value="Оформить заказ" id="openBasket" actionListener="#{basket.save}" />
 
     </h:form>
 
