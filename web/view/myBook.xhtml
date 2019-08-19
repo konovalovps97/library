@@ -19,6 +19,7 @@
         .logo {
             width: 5%;
         }
+
         .detail {
             width: 85%;
             padding-left: 25px;
@@ -29,26 +30,54 @@
 <h:body>
 
     <h:form id="main">
-        <p:dataTable id="tbl" var="car" value="#{lib.myBooks}"
+        <p:dataTable id="tbl" var="car" value="#{myBookBean.myBooks}"
                      paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {Exporters}"
-                     paginator="true" rows="10" style="margin-bottom:20px">
+                     paginator="true" rows="5" style="margin-bottom:20px">
+
+            <f:facet id="lol" name="{Exporters}">
+                <div style="float:right;padding-top: 5px;">
+                    <h:commandLink>
+                        <p:graphicImage name="/demo/images/excel.png" width="24"/>
+                        <p:dataExporter type="xls" target="tbl" fileName="cars"/>
+                    </h:commandLink>
+
+                    <h:commandLink>
+                        <p:graphicImage name="/demo/images/pdf.png" width="24"/>
+                        <p:dataExporter type="pdf" target="tbl" fileName="cars"/>
+                    </h:commandLink>
+
+                    <h:commandLink>
+                        <p:graphicImage name="/demo/images/csv.png" width="24"/>
+                        <p:dataExporter type="csv" target="tbl" fileName="cars"/>
+                    </h:commandLink>
+
+                    <h:commandLink>
+                        <p:graphicImage name="/demo/images/xml.png" width="24"/>
+                        <p:dataExporter type="xml" target="tbl" fileName="cars"/>
+                    </h:commandLink>
+                </div>
+            </f:facet>
+
 
             <p:column>
                 <f:facet name="header">
                     <h:outputText value="Название книги"/>
                 </f:facet>
-                <h:outputText value="#{car.bookName}" />
+                <h:outputText value="#{car.bookName}"/>
             </p:column>
 
 
             <p:column>
                 <f:facet name="header">
-                    <h:outputText value="Действие" />
+                    <h:outputText value="Действие"/>
                 </f:facet>
 
-                <h:commandButton immediate="true"  value="Отдать" id="submitButton" actionListener="#{lib.deleteBookFromOrder(car)}" />
+                <p:commandButton update=":main:tbl" ajax="true" process="@this" value="Отдать" id="submitButton"
+                                 actionListener="#{myBookBean.deleteBookFromOrder(car)}"/>
             </p:column>
         </p:dataTable>
+        <h:commandButton style="float: right" action="library" update=":main:tb1:lol:quantity" value="Назад"
+                         id="toMain"/>
 
 
     </h:form>

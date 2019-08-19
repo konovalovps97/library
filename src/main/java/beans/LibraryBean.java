@@ -1,16 +1,14 @@
 package beans;
 
 import entity.Book;
-import entity.User;
 import entity.UserBasket;
+import org.primefaces.context.RequestContext;
 import service.LibService;
 
 import javax.annotation.PostConstruct;
-import javax.faces.application.ViewHandler;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
-import javax.faces.bean.RequestScoped;
-import javax.faces.component.UIViewRoot;
+import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -22,11 +20,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 import java.util.stream.Collectors;
 
 @ManagedBean(name = "lib")
-@RequestScoped
+@SessionScoped
 public class LibraryBean {
 
     String bookName;
@@ -92,10 +89,11 @@ public class LibraryBean {
                 .createEntityManagerFactory("lol");
         entityManager = factory.createEntityManager();
         entityManager.getTransaction().begin();
-        List<Book> listPersons = entityManager.createQuery("SELECT b FROM  Book as b").getResultList();
+        List<Book> listPersons = entityManager.createNativeQuery("SELECT * from books", Book.class).getResultList();
         if (listPersons == null) {
             System.out.println("all is bad");
         }
+        RequestContext.getCurrentInstance().update("main:tbl");
         return listPersons;
     }
 
@@ -108,13 +106,8 @@ public class LibraryBean {
         if (!cookies.stream().anyMatch(cookie -> cookie.getValue().equals(book.getId().toString())) && book.getQuantity() != 0) {
             response.addCookie(new Cookie("book" + book.getId(), book.getId().toString()));
         }
-        String refreshpage = FacesContext.getCurrentInstance().getViewRoot().getViewId();
-        ViewHandler handler = FacesContext.getCurrentInstance().getApplication().getViewHandler();
-        UIViewRoot root = handler.createView(FacesContext.getCurrentInstance(), refreshpage);
-        root.setViewId(refreshpage);
-        FacesContext.getCurrentInstance().setViewRoot(root);
 
-        //return "/view/library.xhtml";
+        service.reloadPage();
     }
 
     public List<Book> getBooksInLib() {
@@ -123,7 +116,7 @@ public class LibraryBean {
 
     public List<Book> getBasket() {
 
-        List<Integer> books = getCookies()
+        List<Integer> books = service.getCookies()
                 .stream()
                 .filter(cookie -> cookie.getName().contains("book"))
                 .map(cookie -> Integer.parseInt(cookie.getValue()))
@@ -142,30 +135,12 @@ public class LibraryBean {
             query = query.replaceAll("\\[", "").replaceAll("\\]", "");
 
             List<Book> listBook = entityManager.createQuery(query).getResultList();
-
             entityManager.flush();
             entityManager.getTransaction().commit();
 
             return listBook;
         }
-
         return null;
-    }
-
-
-    public Long getPhoneNumber() {
-        FacesContext facesContext = FacesContext.getCurrentInstance();
-        HttpServletRequest request = (HttpServletRequest) facesContext.getExternalContext().getRequest();
-        HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
-
-        Cookie[] cookies = request.getCookies();
-        cookies[0].getName();
-        Long phoneNumber = Long.parseLong(Arrays.stream(request.getCookies())
-                .filter(cookie -> "phone".equals(cookie.getName()))
-                .collect(Collectors.toList())
-                .get(0)
-                .getValue());
-        return phoneNumber;
     }
 
     public void save() throws IOException {
@@ -181,61 +156,29 @@ public class LibraryBean {
             entityManager = factory.createEntityManager();
             entityManager.getTransaction().begin();
 
-            UserBasket userBasket = new UserBasket(getPhoneNumber(), Boolean.TRUE, book.getId(), gen(), book.getBookName());
+            UserBasket userBasket = new UserBasket(service.getPhoneNumber(), Boolean.TRUE, book.getId(), service.gen(), book.getBookName());
 
             //сохранение в user_books
             entityManager.persist(userBasket);
 
             //update в books
             entityManager.createNativeQuery("update books set quantity =" + (book.getQuantity() - 1) + " where book_id = " + book.getId()).executeUpdate();
+            entityManager.flush();
 
             entityManager.getTransaction().commit();
-
-
-            String refreshpage = FacesContext.getCurrentInstance().getViewRoot().getViewId();
-            ViewHandler handler = FacesContext.getCurrentInstance().getApplication().getViewHandler();
-            UIViewRoot root = handler.createView(FacesContext.getCurrentInstance(), refreshpage);
-            root.setViewId(refreshpage);
-            FacesContext.getCurrentInstance().setViewRoot(root);
-           // FacesContext.getCurrentInstance().getPartialViewContext().getRenderIds().add("form");
+            entityManager.merge(userBasket);
+            entityManager.merge(book);
 
         });
 
         //удаление кук
-        getCookies().stream().filter(cookie -> cookie.getName().contains("book")).forEach(cookie -> {
+        service.getCookies().stream().filter(cookie -> cookie.getName().contains("book")).forEach(cookie -> {
 
             cookie.setMaxAge(0);
             response.addCookie(cookie);
         });
+        FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "library.xhtml");
 
-        String loginPage = request.getContextPath() + "/view/library.xhtml";
-        response.sendRedirect(loginPage);
-    }
-
-
-    public Integer gen() {
-        Random r = new Random(System.currentTimeMillis());
-        return ((1 + r.nextInt(2)) * 2 + r.nextInt(10000));
-    }
-
-    public List<Cookie> getCookies() {
-        FacesContext facesContext = FacesContext.getCurrentInstance();
-        HttpServletRequest request = (HttpServletRequest) facesContext.getExternalContext().getRequest();
-        List<Cookie> cookies = new ArrayList<>(Arrays.asList(request.getCookies()));
-        return cookies;
-    }
-
-    public List<UserBasket> getMyBooks() {
-        Thread.currentThread().getContextClassLoader().getResource("META-INF/persistence.xml");
-        EntityManagerFactory emfdb = Persistence.createEntityManagerFactory("lol");
-
-        EntityManager entityManager = emfdb.createEntityManager();
-        User user = entityManager.find(User.class, getPhoneNumber());
-
-        String query = "SELECT b FROM  UserBasket  as b where b.phoneNumber = " + user.getPhoneNumber() + " and b.status = " + Boolean.TRUE;
-        List<UserBasket> userBaskets = entityManager.createQuery(query).getResultList();
-
-        return userBaskets;
     }
 
     public void deleteBookFromBasket(Book book) {
@@ -244,32 +187,13 @@ public class LibraryBean {
         HttpServletRequest request = (HttpServletRequest) facesContext.getExternalContext().getRequest();
         HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
 
-
-        getCookies().stream().filter(cookie -> cookie.getName().contains("book" + book.getId())).forEach(cookie -> {
+        service.getCookies().stream().filter(cookie -> cookie.getName().contains("book" + book.getId())).forEach(cookie -> {
             cookie.setMaxAge(0);
             response.addCookie(cookie);
         });
 
-
+        service.reloadPage();
     }
-
-    public void deleteBookFromOrder(UserBasket userBasket) {
-        EntityManager entityManager;
-        EntityManagerFactory factory = Persistence.createEntityManagerFactory("lol");
-        entityManager = factory.createEntityManager();
-        entityManager.getTransaction().begin();
-        entityManager.createNativeQuery("update user_books set status =" + Boolean.FALSE + " where id_book_in_basket =  " + userBasket.getId()).executeUpdate();
-        entityManager.getTransaction().commit();
-
-
-
-        String refreshpage = FacesContext.getCurrentInstance().getViewRoot().getViewId();
-        ViewHandler handler = FacesContext.getCurrentInstance().getApplication().getViewHandler();
-        UIViewRoot root = handler.createView(FacesContext.getCurrentInstance(), refreshpage);
-        root.setViewId(refreshpage);
-        FacesContext.getCurrentInstance().setViewRoot(root);
-    }
-
 
     public List<UserBasket> getHistory() {
         FacesContext facesContext = FacesContext.getCurrentInstance();
@@ -278,12 +202,10 @@ public class LibraryBean {
 
         EntityManagerFactory emfdb = Persistence.createEntityManagerFactory("lol");
 
-
         EntityManager entityManager = emfdb.createEntityManager();
-        String query = "SELECT b FROM  UserBasket  as b where b.phoneNumber = " + getPhoneNumber();
+        String query = "SELECT b FROM  UserBasket  as b where b.phoneNumber = " + service.getPhoneNumber();
         List<UserBasket> userBaskets = entityManager.createQuery(query).getResultList();
 
         return userBaskets;
     }
-
 }

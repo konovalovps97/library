@@ -69,7 +69,7 @@ public class AuthBean {
 
     }
 
-    public String login() {
+    public void login() {
 
         FacesContext facesContext = FacesContext.getCurrentInstance();
         HttpServletRequest request = (HttpServletRequest) facesContext.getExternalContext().getRequest();
@@ -91,14 +91,17 @@ public class AuthBean {
 
                 response.addCookie(cookie);
                //response.flushBuffer();
-                return "/view/library.xhtml?faces-redirect=true";
+                FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "library.xhtml");
+
+                //FacesContext.getCurrentInstance().getExternalContext().redirect("library.xhtml");
+                //return "/view/library.xhtml?faces-redirect=true";
             }
 
         } catch (SQLException | NullPointerException e) {
             System.out.println(123);
         }
 
-        return "";
+        //return "";
     }
 
 

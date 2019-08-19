@@ -4,6 +4,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "user_books")
+@Cacheable(false)
 public class UserBasket {
 
     @Id

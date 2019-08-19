@@ -1,16 +1,15 @@
 package entity;
 
-import service.LibService;
+import org.eclipse.persistence.config.CacheType;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name = "books")
+@Cacheable(false)
 public class Book implements Serializable {
 
     @Id
