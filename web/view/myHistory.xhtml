@@ -32,7 +32,29 @@
         <p:dataTable id="tbl" var="car" value="#{lib.getHistory()}"
                      paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {Exporters}"
                      paginator="true" rows="10" style="margin-bottom:20px">
+            <f:facet id="lol" name="{Exporters}">
+                <div style="float:right;padding-top: 5px;">
+                    <h:commandLink>
+                        <p:graphicImage name="/demo/images/excel.png" width="24"/>
+                        <p:dataExporter type="xls" target="tbl" fileName="cars" />
+                    </h:commandLink>
 
+                    <h:commandLink>
+                        <p:graphicImage name="/demo/images/pdf.png" width="24"/>
+                        <p:dataExporter type="pdf" target="tbl" fileName="cars"/>
+                    </h:commandLink>
+
+                    <h:commandLink>
+                        <p:graphicImage name="/demo/images/csv.png" width="24"/>
+                        <p:dataExporter type="csv" target="tbl" fileName="cars" />
+                    </h:commandLink>
+
+                    <h:commandLink>
+                        <p:graphicImage name="/demo/images/xml.png" width="24"/>
+                        <p:dataExporter type="xml" target="tbl" fileName="cars" />
+                    </h:commandLink>
+                </div>
+            </f:facet>
 
             <p:column>
                 <f:facet name="header">

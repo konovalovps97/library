@@ -11,9 +11,6 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -80,6 +77,9 @@ public class LibraryBean {
     @ManagedProperty("#{libraryRepo}")
     private LibraryRepo libraryRepo;
 
+    @ManagedProperty("#{editBook}")
+    private EditBookBeak editBookBeak;
+
     @PostConstruct
     public void init() {
         books = getBooks();
@@ -108,18 +108,21 @@ public class LibraryBean {
         service.reloadPage();
     }
 
+    public void goToEdit(Book book) {
+        editBookBeak.setBook(book);
+      /*  FacesContext facesContext = FacesContext.getCurrentInstance();
+        HttpServletRequest request = (HttpServletRequest) facesContext.getExternalContext().getRequest();
+        HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
+
+        return  "/view/editBook.xhtml";*/
+    }
+
     public List<Book> getBooksInLib() {
         return books;
     }
 
     public List<UserBasket> getHistory() {
-        EntityManagerFactory emfdb = Persistence.createEntityManagerFactory("lol");
-
-        EntityManager entityManager = emfdb.createEntityManager();
-        String query = "SELECT b FROM  UserBasket  as b where b.phoneNumber = " + service.getPhoneNumber();
-        List<UserBasket> userBaskets = entityManager.createQuery(query).getResultList();
-
-        return userBaskets;
+        return libraryRepo.getHistoryBookFromDB();
     }
 
     public List<Book> getBasket() {
@@ -132,5 +135,13 @@ public class LibraryBean {
 
     public void setLibraryRepo(LibraryRepo libraryRepo) {
         this.libraryRepo = libraryRepo;
+    }
+
+    public EditBookBeak getEditBookBeak() {
+        return editBookBeak;
+    }
+
+    public void setEditBookBeak(EditBookBeak editBookBeak) {
+        this.editBookBeak = editBookBeak;
     }
 }

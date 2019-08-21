@@ -30,7 +30,7 @@
 <h:body>
 
     <h:form id="main">
-        <p:dataTable id="tbl" var="car" value="#{myBookBean.myBooks}"
+        <p:dataTable id="tbl" var="car" value="#{myBookBean.getBooks}"
                      paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {Exporters}"
                      paginator="true" rows="5" style="margin-bottom:20px">
 
